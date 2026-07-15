@@ -1,0 +1,5 @@
+.venv/
+pycache/
+*.pyc
+token.txt
+database.json
