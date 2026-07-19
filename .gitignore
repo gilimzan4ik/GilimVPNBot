@@ -3,3 +3,4 @@ pycache/
 *.pyc
 token.txt
 database.json
+admin_id.txt

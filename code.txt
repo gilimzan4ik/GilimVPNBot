@@ -5,7 +5,7 @@ import os
 
 data_file = "database.json"
 token_file = "token.txt"
-admin_id_file = "admin_id.txt"
+admin_id = 1758564550
 waiting_config = None
 
 def load_data():
@@ -22,11 +22,6 @@ def read_token():
     with open(token_file, "r", encoding="utf-8") as f:
         return f.readline()
 
-def admin_id():
-    with open(admin_id_file, "r", encoding="utf-8") as f:
-        return int(f.readline())
-
-admin_id = admin_id()
 
 chat_data = load_data()
 
@@ -44,7 +39,7 @@ def start_message(message):
             "start_date": "",
             "end_date": "",
             "state": "waiting_login",
-            "link": "",
+            "link": ""
         }
         save_data()
 
@@ -78,30 +73,30 @@ def message_handler(message):
         )
         return
 
-    elif message.chat.id == admin_id:
+    if message.chat.id == admin_id:
         return
 
-    else:
-        chat_id = str(message.chat.id)
-        if chat_data[chat_id]["state"] == "waiting_approval":
-            bot.send_message(
-                message.chat.id,
-                f"Ты уже зарегестрирован! Но аккаунт не подтвержден админом! Обратитесь в тех поддержку"
-            )
-        elif chat_data[chat_id]["state"] == "active":
-            bot.send_message(
-                message.chat.id,
-                f"Ты уже успешно зарегестрирован!"
-            )
-        elif chat_data[chat_id]["state"] == "waiting_login":
-            chat_data[chat_id]["username"] = message.text
-            chat_data[chat_id]["state"] = "waiting_approval"
-            save_data()
-            send_username(message, chat_id)
-            bot.send_message(
-                message.chat.id,
-                f"Вы успешно зарегестрированы!\nАдмин скоро подтвердит ваш профиль!"
-            )
+def useradd_message(message):
+    chat_id = str(message.chat.id)
+    if chat_data[chat_id]["state"] == "waiting_approval":
+        bot.send_message(
+            message.chat.id,
+            f"Ты уже зарегестрирован! Но аккаунт не подтвержден админом! Обратитесь в тех поддержку"
+        )
+    elif chat_data[chat_id]["state"] == "active":
+        bot.send_message(
+            message.chat.id,
+            f"Ты уже успешно зарегестрирован!"
+        )
+    elif chat_data[chat_id]["state"] == "waiting_login":
+        chat_data[chat_id]["username"] = message.text
+        chat_data[chat_id]["state"] = "waiting_approval"
+        save_data()
+        send_username(message, chat_id)
+        bot.send_message(
+            message.chat.id,
+            f"Вы успешно зарегестрированы!\nАдмин скоро подтвердит ваш профиль!"
+        )
 
 def send_username(message, chat_id):
     bot.send_message(
@@ -132,9 +127,8 @@ def callback_handler(call):
             )
             return
 
+        chat_data[chat_id]["state"] = "waiting_approval"
         global waiting_config
-        chat_data[chat_id]["state"] = "active"
-        chat_data[chat_id]["waiting_config"] = chat_id
         waiting_config = chat_id
         save_data()
 
