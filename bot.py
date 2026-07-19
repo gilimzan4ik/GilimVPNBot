@@ -50,7 +50,7 @@ def start_message(message):
 
     bot.send_message(
         message.chat.id,
-        f"Приветствую тебя в сервисе GilimVPN!\n\nДля старта напиши логин, который тебе выдал администратор:"
+        f"Приветствую тебя в сервисе GilimVPN!\n\nДля старта напиши логин, который тебе выдал админ:\n\nЧтобы его получить обратитесь за помощью по кнопке"
     )
 
 @bot.message_handler(func=lambda message: True)
