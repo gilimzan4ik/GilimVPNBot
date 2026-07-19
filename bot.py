@@ -44,14 +44,20 @@ def start_message(message):
             "start_date": "",
             "end_date": "",
             "state": "waiting_login",
-            "link": "",
+            "link": ""
         }
         save_data()
 
     bot.send_message(
         message.chat.id,
-        f"Приветствую тебя в сервисе GilimVPN!\n\nДля старта напиши логин, который тебе выдал админ:\n\nЧтобы его получить обратитесь за помощью по кнопке"
+        f"Приветствую тебя в сервисе GilimVPN!\n\nДля старта напиши логин, который тебе выдал админ:\n\nЧтобы его получить обратитесь за помощью по кнопке",
+        reply_markup=get_main_keyboard()
     )
+
+def get_main_keyboard():
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.row(KeyboardButton("Помощь"))
+    return keyboard
 
 @bot.message_handler(func=lambda message: True)
 
@@ -80,6 +86,14 @@ def message_handler(message):
 
     elif message.chat.id == admin_id:
         return
+
+    elif message.text == "Помощь":
+            chat_id = str(message.chat.id)
+            bot.send_message(
+                message.chat.id,
+                "За помощью или обратной связью сюда: @fancutedora",
+                reply_markup=get_main_keyboard()
+            )
 
     else:
         chat_id = str(message.chat.id)
@@ -120,6 +134,8 @@ def get_approve_keyboard(chat_id):
 
 @bot.callback_query_handler(func=lambda call: True)
 
+
+
 def callback_handler(call):
 
     if call.data.startswith("approve_"):
@@ -134,7 +150,6 @@ def callback_handler(call):
 
         global waiting_config
         chat_data[chat_id]["state"] = "active"
-        chat_data[chat_id]["waiting_config"] = chat_id
         waiting_config = chat_id
         save_data()
 
