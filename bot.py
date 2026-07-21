@@ -2,6 +2,7 @@ import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 import json
 import os
+from datetime import datetime, timedelta
 
 data_file = "database.json"
 token_file = "token.txt"
@@ -60,7 +61,6 @@ def get_main_keyboard():
     return keyboard
 
 @bot.message_handler(func=lambda message: True)
-
 def message_handler(message):
     global waiting_config
 
@@ -76,6 +76,12 @@ def message_handler(message):
             f"Скопируйте ссылку и вставьте ее в установленный VPN-клиент. (Happ)\n\n {link}"
         )
 
+        start_date = datetime.now()
+        end_date = start_date + timedelta(days=30)
+        chat_data[waiting_config]["start_date"] = start_date.strftime("%Y-%m-%d")
+        chat_data[waiting_config]["end_date"] = end_date.strftime("%Y-%m-%d")
+        save_data()
+
         waiting_config = None
 
         bot.send_message(
@@ -85,15 +91,18 @@ def message_handler(message):
         return
 
     elif message.chat.id == admin_id:
+        bot.send_message(
+            message.chat.id,
+            "Ты дурак?"
+        )
         return
 
     elif message.text == "Помощь":
-            chat_id = str(message.chat.id)
-            bot.send_message(
-                message.chat.id,
-                "За помощью или обратной связью сюда: @fancutedora",
-                reply_markup=get_main_keyboard()
-            )
+        bot.send_message(
+            message.chat.id,
+            "По всем вопросам обращаться сюда: @fancutedora",
+            reply_markup=get_main_keyboard()
+        )
 
     else:
         chat_id = str(message.chat.id)
@@ -133,9 +142,6 @@ def get_approve_keyboard(chat_id):
     return keyboard
 
 @bot.callback_query_handler(func=lambda call: True)
-
-
-
 def callback_handler(call):
 
     if call.data.startswith("approve_"):
